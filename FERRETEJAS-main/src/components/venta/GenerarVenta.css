@@ -1,0 +1,87 @@
+/* GenerarVenta.css */
+
+/* Estilos para el contenedor principal */
+.generar-venta-container {
+    width: 90%; /* Ocupa el 90% del ancho disponible */
+    margin: 50px auto; /* Centra el contenedor horizontalmente */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para los elementos del formulario */
+.generar-venta-container h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.generar-venta-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.generar-venta-container .form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.generar-venta-container label {
+    margin-right: 12px;
+    font-weight: bold;
+    flex: 1;
+}
+
+.generar-venta-container input {
+    flex: 2;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.generar-venta-container button {
+    padding: 12px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.generar-venta-container button:hover {
+    background-color: #0056b3;
+}
+
+/* Ajuste para el total de cada producto */
+.generar-venta-container .form-row strong {
+    text-align: left; /* Alinea el texto a la izquierda */
+    flex: 1; /* Permite que el total ocupe menos espacio */
+    padding-right: 12px; /* Espaciado a la derecha del total */
+}
+
+/* Estilos para la tabla de datos del producto */
+.generar-venta-container .submitted-data {
+    margin-top: 20px;
+}
+
+.generar-venta-container table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+
+.generar-venta-container table td,
+.generar-venta-container table th {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.generar-venta-container table th {
+    background-color: #007bff;
+    color: #fff;
+}
