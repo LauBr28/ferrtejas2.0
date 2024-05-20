@@ -8,6 +8,7 @@ import GenerarVenta from "./components/venta/GenerarVenta"; // Importa el compon
 import HistorialVentas from "./components/venta/HistorialVentas";
 import { AuthProvider } from "./contexts/authContext";
 import { useRoutes } from "react-router-dom";
+import Cotizacion from "./components/cotizacion/cotizacion"
 
 
 function App() {
@@ -43,6 +44,10 @@ function App() {
     {
       path: "/historialVentas", // Ruta para el historial de ventas
       element: <HistorialVentas />,
+    },
+    {
+      path: "/cotizacion", // Ruta para la venta sin margen
+      element: <Cotizacion />,
     },
   ];
 

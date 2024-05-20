@@ -25,8 +25,7 @@ const ProductsForm = () => {
 
   // Calcular el precio con IVA
   const conIvaValue = parseFloat(sinIva) * 1.19;
-  // Calcular el precio recomendado de venta (precio con IVA + 672)
-  const recomendadoValue = conIvaValue + 672;
+  let recomendadoValue;
 
 
   useEffect(() => {
@@ -39,7 +38,14 @@ const ProductsForm = () => {
     };
     fetchData();
   }, []);
-
+// Función para formatear el precio
+const formatPrice = (price) => {
+  // Convertir el precio a un número con dos decimales y formato de miles y coma
+  return parseFloat(price).toLocaleString('es-ES', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+  });
+};
 
 
   const handleProductRegistration = async (e) => {
@@ -58,15 +64,25 @@ const ProductsForm = () => {
       const db = getFirestore();
       const productsCollectionRef = collection(db, "products");
       const querySnapshot = await getDocs(query(productsCollectionRef, where("name_lowercase", "==", lowercaseName)));
-      const margenContribucionValue = (((parseFloat(sinIva) - parseFloat(compra)) / (parseFloat(compra)) * 100))
+      const margenContribucionValue = (((parseFloat(sinIva) - parseFloat(compra)) / (parseFloat(sinIva)) * 100))
       const margenDescuentoValue = ((parseFloat(margenContribucionValue) * 25) / 100)
       const margenContMinValue = (parseFloat(margenContribucionValue) - parseFloat(margenDescuentoValue))
-      const recomendadoMinValue = (parseFloat(compra) * (parseFloat(margenContMinValue) + 100) * 1.19)
+      const recomendadoMinValue = parseFloat((compra * (1 + margenContMin / 100) * 1.19) + 747);
+      // Calcular el precio recomendado de venta
+      
+      if (parseFloat(margenContribucionValue) < 0) {
+          // Si el margen de contribución es menor que 0, multiplica la compra por 1.13 y suma 747
+          recomendadoValue = ((parseFloat(compra) * 1.3) + 747) * 1.19;
+      } else {
+          // De lo contrario, suma 747 a la compra
+          recomendadoValue = (parseFloat(conIvaValue) + 747) * 1.19;
+      }
   
       if (!querySnapshot.empty) {
         alert("Ya existe un producto con este nombre.");
         return;
       }
+      const margenContribucionValue2 = ((((parseFloat(recomendadoValue) / 1.19) - parseFloat(compra)) / (parseFloat(recomendadoValue) / 1.19)) * 100);
 
       const updateDateTime = new Date();
       // Si no hay un producto con el mismo nombre, proceder con el registro
@@ -78,7 +94,7 @@ const ProductsForm = () => {
         conIva: conIvaValue,
         recomendado: recomendadoValue,
         stock: stock,
-        margenContribucion: margenContribucionValue, 
+        margenContribucion: margenContribucionValue2, 
         margenDescuento: margenDescuentoValue,
         margenContMin: margenContMinValue, 
         recomendadoMin: recomendadoMinValue, 
@@ -87,7 +103,8 @@ const ProductsForm = () => {
       console.log(app.firestore);
       console.log("Product added successfully!");
 
-      setMargenContribucion(margenContribucionValue);
+      setRecomendado(recomendadoValue);
+      setMargenContribucion(margenContribucionValue2);
       setMargenDescuento(margenDescuentoValue);
       setMargenContMin(margenContMinValue);
       setRecomendadoMin(recomendadoMinValue);
@@ -97,8 +114,6 @@ const ProductsForm = () => {
       setSinIva('');
       setStock('');
 
-
-
       const updatedProducts = [...products, {
         name,
         compra,
@@ -106,7 +121,7 @@ const ProductsForm = () => {
         conIva: conIvaValue,
         recomendado: recomendadoValue,
         stock,
-        margenContribucion: margenContribucionValue,
+        margenContribucion: margenContribucionValue2,
         margenDescuento: margenDescuentoValue,
         margenContMin: margenContMinValue,
         recomendadoMin: recomendadoMinValue
@@ -133,29 +148,44 @@ const ProductsForm = () => {
       console.error("Error deleting product: ", error);
     }
   };
-
   const handleProductEdit = async () => {
     if (!selectedProductId) {
       alert("No se ha seleccionado ningún producto para editar.");
       return;
     }
-
+  
     try {
+      const margenContribucionValue = (((parseFloat(sinIva) - parseFloat(compra)) / (parseFloat(compra)) * 100))
+      const margenDescuentoValue = ((parseFloat(margenContribucionValue) * 25) / 100)
+      const margenContMinValue = (parseFloat(margenContribucionValue) - parseFloat(margenDescuentoValue))
+      const recomendadoMinValue = parseFloat((compra * (1 + margenContMin / 100) * 1.19) + 747);
+      if (parseFloat(margenContribucionValue) < 0) {
+        // Si el margen de contribución es menor que 0, multiplica la compra por 1.13 y suma 747
+        recomendadoValue = ((parseFloat(compra) * 1.3) + 747) * 1.19;
+    } else {
+        // De lo contrario, suma 747 a la compra
+        recomendadoValue = (parseFloat(conIvaValue) + 747) * 1.19;
+    }
+    const margenContribucionValue2 = ((((parseFloat(recomendadoValue) / 1.19) - parseFloat(compra)) / (parseFloat(recomendadoValue) / 1.19)) * 100);
+  
+      // Actualizar los estados de los campos de entrada primero
+      setName(name);
+      setCompra(compra);
+      setSinIva(sinIva);
+      setConIva(conIvaValue);
+      setRecomendado(recomendadoValue);
+      setStock(stock);
+  
       const db = getFirestore();
       const productDocRef = doc(db, "products", selectedProductId);
       // Obtener el documento actual
       const docSnapshot = await getDoc(productDocRef);
       const productData = docSnapshot.data();
-
-      const margenContribucionValue = (((parseFloat(sinIva) - parseFloat(compra)) / (parseFloat(compra)) * 100))
-      const margenDescuentoValue = ((parseFloat(margenContribucionValue) * 25) / 100)
-      const margenContMinValue = (parseFloat(margenContribucionValue) - parseFloat(margenDescuentoValue))
-      const recomendadoMinValue = (parseFloat(compra) * (parseFloat(margenContMinValue) + 100) * 1.19)
-
+  
       // Actualizar el historial de actualizaciones
       const updatedHistory = productData.updateHistory || [];
       updatedHistory.push({ dateTime: new Date() });
-
+  
       await updateDoc(productDocRef, {
         name: name,
         compra: compra,
@@ -163,17 +193,15 @@ const ProductsForm = () => {
         conIva: conIva,
         recomendado: recomendado,
         stock: stock,
-        margenContribucion: margenContribucionValue, // Nuevo campo
-        margenDescuento: margenDescuentoValue, // Nuevo campo
-        margenContMin: margenContMinValue, // Nuevo campo
-        recomendadoMin: recomendadoMinValue, // Nuevo campo
+        margenContribucion: margenContribucionValue2,
+        margenDescuento: margenDescuentoValue,
+        margenContMin: margenContMinValue,
+        recomendadoMin: recomendadoMinValue,
         updateHistory: updatedHistory
       });
+  
       console.log("Product updated successfully!");
-      setMargenContribucion(margenContribucionValue);
-      setMargenDescuento(margenDescuentoValue);
-      setMargenContMin(margenContMinValue);
-      setRecomendadoMin(recomendadoMinValue);
+  
       // Actualizar la lista de productos después de la edición
       const updatedProducts = products.map(product => {
         if (product.id === selectedProductId) {
@@ -182,19 +210,19 @@ const ProductsForm = () => {
             name: name,
             compra: compra,
             sinIva: sinIva,
-            conIva: conIvaValue, // Actualiza conIva con el nuevo valor
-            recomendado: recomendadoValue, // Actualiza recomendado con el nuevo valor
+            conIva: conIvaValue,
+            recomendado: recomendadoValue,
             stock: stock,
-            margenContribucion: margenContribucionValue, // Nuevo campo
-            margenDescuento: margenDescuentoValue, // Nuevo campo
-            margenContMin: margenContMinValue, // Nuevo campo
-            recomendadoMin: recomendadoMinValue, 
-
+            margenContribucion: margenContribucionValue2,
+            margenDescuento: margenDescuentoValue,
+            margenContMin: margenContMinValue,
+            recomendadoMin: recomendadoMinValue
           };
         }
         return product;
       });
       setProducts(updatedProducts);
+  
       // Limpiar los campos de entrada después de la edición
       setName('');
       setCompra('');
@@ -235,9 +263,14 @@ const ProductsForm = () => {
           <h1>Registrar un nuevo producto</h1>
           <form className="form" onSubmit={handleProductRegistration}>
             <input type="text" placeholder="Nombre del producto" value={name} onChange={(e) => setName(e.target.value)} />
-            <input type="number" placeholder="Precio de compra" value={compra} onChange={(e) => setCompra(e.target.value)} />
-            <input type="number" placeholder="Precio sin IVA" value={sinIva} onChange={(e) => setSinIva(e.target.value)} />
-            <input type="number" placeholder="Cantidad del producto" value={stock} onChange={(e) => setStock(e.target.value)} />
+            <input type="number" placeholder="Precio de compra" value={compra} onChange={(e) => setCompra(parseFloat(e.target.value))} />
+            <input type="number" placeholder="Precio sin IVA" value={sinIva} onChange={(e) => {
+              const newValue = parseFloat(e.target.value);
+              setSinIva(newValue);
+              const conIvaValue = parseFloat(newValue) * 1.19;
+              setConIva(conIvaValue);
+               }} />
+            <input type="number" placeholder="Cantidad del producto" value={stock} onChange={(e) => setStock(parseFloat(e.target.value))} />
             <button type="submit">Registrar</button>
             <button type="button" onClick={handleProductEdit}>Actualizar</button>
           </form>
@@ -260,8 +293,8 @@ const ProductsForm = () => {
             {products.map(product => (
               <tr key={product.id}>
                 <td>{product.name}</td>
-                <td>${product.compra}</td>
-                <td>${product.sinIva}</td>
+                <td>${formatPrice(product.compra)}</td>
+                <td>${formatPrice(product.sinIva)}</td>
                 <td>{product.stock}</td>
                 {isAdmin && (
                   <td className="action-buttons">

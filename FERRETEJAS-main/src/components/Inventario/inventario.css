@@ -32,3 +32,6 @@
     text-align: center;
   }
 
+  .low-stock {
+    color: red;
+}

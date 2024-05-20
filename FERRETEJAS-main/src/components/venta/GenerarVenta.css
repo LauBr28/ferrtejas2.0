@@ -2,7 +2,7 @@
 
 /* Estilos para el contenedor principal */
 .generar-venta-container {
-    width: 90%; /* Ocupa el 90% del ancho disponible */
+    width: 95%; /* Ocupa el 90% del ancho disponible */
     margin: 50px auto; /* Centra el contenedor horizontalmente */
     padding: 20px;
     border: 1px solid #ccc;
@@ -15,7 +15,7 @@
 .generar-venta-container h2 {
     font-size: 1.5rem;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     text-align: center;
 }
 
@@ -30,6 +30,11 @@
     margin-bottom: 16px;
 }
 
+.generar-venta-container .form-row.full-width {
+    flex-direction: column; /* Cambia la dirección a columna para los botones */
+    align-items: flex-start; /* Alinea los botones a la izquierda */
+}
+
 .generar-venta-container label {
     margin-right: 12px;
     font-weight: bold;
@@ -37,7 +42,7 @@
 }
 
 .generar-venta-container input {
-    flex: 2;
+    flex: 1; /* Cambia el ancho del input para ocupar todo el espacio disponible */
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -50,6 +55,12 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    margin-top: 12px; /* Añade un margen superior a los botones */
+    margin-left:6px;
+}
+
+.generar-venta-container button:not(:last-child) {
+    margin-right: 12px; /* Añade un margen derecho solo a los botones que no son el último */
 }
 
 .generar-venta-container button:hover {

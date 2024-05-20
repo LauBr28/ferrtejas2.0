@@ -1,34 +1,45 @@
-import React, { useState } from 'react'
-import { Navigate, Link } from 'react-router-dom'
-import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../../../firebase/auth'
-import { useAuth } from '../../../contexts/authContext'
+import React, { useState } from 'react';
+import { Navigate, Link } from 'react-router-dom';
+import { doSignInWithEmailAndPassword, doSignInWithGoogle } from '../../../firebase/auth';
+import { useAuth } from '../../../contexts/authContext';
 
 const Login = () => {
-    const { userLoggedIn } = useAuth()
+    const { userLoggedIn } = useAuth();
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [isSigningIn, setIsSigningIn] = useState(false)
-    const [errorMessage, setErrorMessage] = useState('')
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isSigningIn, setIsSigningIn] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const onSubmit = async (e) => {
-        e.preventDefault()
-        if(!isSigningIn) {
-            setIsSigningIn(true)
-            await doSignInWithEmailAndPassword(email, password)
-            // doSendEmailVerification()
-        }
-    }
-
-    const onGoogleSignIn = (e) => {
-        e.preventDefault()
+        e.preventDefault();
         if (!isSigningIn) {
-            setIsSigningIn(true)
-            doSignInWithGoogle().catch(err => {
-                setIsSigningIn(false)
-            })
+            setIsSigningIn(true);
+            try {
+                await doSignInWithEmailAndPassword(email, password);
+            } catch (err) {
+                setErrorMessage(err.message);
+                setIsSigningIn(false);
+            }
         }
-    }
+    };
+
+    const onGoogleSignIn = async (e) => {
+        e.preventDefault();
+        if (!isSigningIn) {
+            setIsSigningIn(true);
+            try {
+                const result = await doSignInWithGoogle();
+                if (!result || !result.user) {
+                    throw new Error("Google sign-in failed.");
+                }
+                // Additional logic if needed, for example, updating user profile
+            } catch (err) {
+                setErrorMessage(err.message);
+                setIsSigningIn(false);
+            }
+        }
+    };
 
     return (
         <div>
@@ -57,7 +68,6 @@ const Login = () => {
                                 className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg transition duration-300"
                             />
                         </div>
-
 
                         <div>
                             <label className="text-sm text-gray-600 font-bold">
@@ -110,7 +120,7 @@ const Login = () => {
                 </div>
             </main>
         </div>
-    )
+    );
 }
 
-export default Login
+export default Login;
