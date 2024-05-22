@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, onSnapshot} from 'firebase/firestore';
 import { db } from '../../firebase/firebase';
 import './inventario.css';
 
@@ -26,13 +26,23 @@ const Inventario = () => {
         setSearchTerm(e.target.value);
     };
 
-    const formatCurrency = (value) => {
-        // Convertir el valor a número y dividirlo para agregar un punto decimal
-        const intValue = parseInt(value);
-        const decimalPart = value % 100; // Obtener los últimos dos dígitos
-        const integerPart = (value - decimalPart) / 100; // Obtener la parte entera
+    // Función para formatear el precio
+    const formatPrice = (price) => {
+        // Convertir el precio a un número con dos decimales y formato de miles y coma
+        return parseFloat(price).toLocaleString('es-ES', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    };
 
-        return `$${integerPart.toLocaleString()}.${decimalPart.toLocaleString().padStart(2, '0')}`;
+    const updateStockLocal = async () => {
+        const q = query(collection(db, 'products'), orderBy('name'));
+        const querySnapshot = await getDocs(q);
+        const documents = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        setData(documents);
     };
 
     const filteredData = data.filter(item =>
@@ -68,20 +78,20 @@ const Inventario = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredData.map(item => (
-                        <tr key={item.id}>
-                            <td>{item.name}</td>
-                            <td>${item.compra}</td>
-                            <td>${item.sinIva}</td>
-                            <td>${parseFloat(item.conIva).toFixed(0)}</td>
-                            <td>${parseFloat(item.recomendado).toFixed(0)}</td>
-                            <td>{item.stock}</td>
-                            <td>{parseFloat(item.margenContribucion).toFixed(2)}</td>
-                            <td>{parseFloat(item.margenDescuento).toFixed(2)}</td>
-                            <td>{parseFloat(item.margenContMin).toFixed(2)}</td>
-                            <td>{formatCurrency(parseFloat(item.recomendadoMin).toFixed(0))}</td>
-                        </tr>
-                    ))}
+                {filteredData.map(item => (
+                    <tr key={item.id} className={item.stock < 25 ? 'low-stock' : ''}>
+                        <td>{item.name}</td>
+                        <td>${formatPrice(item.compra)}</td>
+                        <td>${formatPrice(item.sinIva)}</td>
+                        <td>${formatPrice(item.conIva)}</td>
+                        <td>${formatPrice(item.recomendado)}</td>
+                        <td>{item.stock}</td>
+                        <td>{formatPrice(item.margenContribucion)}</td>
+                        <td>{formatPrice(item.margenDescuento)}</td>
+                        <td>{formatPrice(item.margenContMin)}</td>
+                        <td>${formatPrice(item.recomendadoMin)}</td>
+                    </tr>
+                ))}
                 </tbody>
             </table>
         </div>

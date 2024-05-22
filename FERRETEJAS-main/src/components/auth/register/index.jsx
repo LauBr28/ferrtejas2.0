@@ -19,7 +19,22 @@ const Register = () => {
         e.preventDefault()
         if(!isRegistering) {
             setIsRegistering(true)
-            await doCreateUserWithEmailAndPassword(email, password)
+            try {
+                await doCreateUserWithEmailAndPassword(email, password)
+                // Navegar a la página de inicio o mostrar un mensaje de éxito
+                navigate('/home')
+            } catch (error) {
+                if(error.message==='Firebase: Password should be at least 6 characters (auth/weak-password).'){
+                    setErrorMessage('Error al registrar el usuario: (la contraseña debe ser de 6 digitos o más)' )
+                    setIsRegistering(false)
+                    console.log(error.message)
+                }
+                else{
+                    setErrorMessage('Error al registrar el usuario.')
+                    setIsRegistering(false)
+                    console.log(error.message)
+                }
+            }
         }
     }
 

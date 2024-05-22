@@ -38,13 +38,13 @@
 .action-buttons {
     display: flex;
     justify-content: space-between;
-    text-decoration: underline;
-    color: blue;
+    color: rgb(0, 255, 225);
     cursor: pointer;
 }
 
 .action-buttons button {
     margin-right: 5px;
+    background-color: #2ea297;
     /* Espaciado entre los botones */
 }
 

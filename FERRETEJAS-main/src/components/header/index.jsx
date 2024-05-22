@@ -14,8 +14,8 @@ const Header = () => {
                 userLoggedIn
                     ?
                     <>
-                        <Link className='text-sm text-blue-600 underline' to={'/home'}>Inicio</Link>
-                        <button onClick={() => { doSignOut().then(() => { navigate('/login') }) }} className='text-sm text-blue-600 underline'>Salir de la cuenta</button>
+                        <Link className='text-sm text-white-600' to={'/home'}>Inicio</Link>
+                        <button onClick={() => { doSignOut().then(() => { navigate('/login') }) }} className='text-sm text-white-600'>Salir de la cuenta</button>
                     </>
                     :
                     <>

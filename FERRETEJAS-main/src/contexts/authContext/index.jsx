@@ -27,7 +27,7 @@ export function AuthProvider({ children }) {
       setCurrentUser({ ...user });
 
       // Verificar si el usuario es el administrador por su correo electrónico
-      if (user.email === 'ferretejasbogotasas@gmail.com') {
+      if (user.email === 'ferretejasbogotasas@gmail.com' || user.email === 'ferretejasbogotasas@gmail.com' ) {
         setIsAdmin(true);
       } else {
         setIsAdmin(false);

@@ -42,6 +42,12 @@ const Home = () => {
                         Historial Ventas
                     </button>
                 </Link>
+                {/* Mostrar para cualquier usuario autenticado */}
+                <Link to="/cotizacion">
+                    <button className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 mb-2">
+                        Generar Venta sin Margen 
+                    </button>
+                </Link>
             </div>
         </div>
     );
