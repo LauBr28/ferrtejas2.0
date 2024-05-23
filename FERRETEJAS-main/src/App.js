@@ -1,6 +1,7 @@
 import Login from "./components/auth/login";
 import Register from "./components/auth/register";
 import Header from "./components/header";
+import AboutUs from "./components/aboutUs";
 import Home from "./components/home";
 import ProductsForm from "./components/ProductsForm/ProductsForm";
 import Inventario from "./components/Inventario/inventario";
@@ -16,6 +17,10 @@ function App() {
     {
       path: "*",
       element: <Login />,
+    },
+    {
+      path: "/aboutUs",
+      element: <AboutUs />,
     },
     {
       path: "/login",

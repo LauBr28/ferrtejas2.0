@@ -1,0 +1,23 @@
+.card-link {
+    margin-right: 10px; /* Espaciado entre las tarjetas */
+}
+
+.card-button {
+    background-color: #cccccc; /* Color de fondo gris */
+    color: #333; /* Texto gris oscuro */
+    border: none;
+    border-radius: 8px; /* Aumentar el radio para que se vea más como una tarjeta */
+    padding: 20px; /* Aumentar el padding para dar más espacio al contenido */
+    transition: transform 0.3s ease; /* Transición para crecer al hover */
+    display: inline-block; /* Cambiar a inline-block para que se ajuste al contenido */
+    width: 200px; /* Ajustar el ancho de la tarjeta */
+    height: 250px; /* Ajustar el alto de la tarjeta */
+    text-align: center; /* Centrar el texto horizontalmente */
+    line-height: 1.5;
+    font-size: larger; /* Aumentar el line-height para centrar verticalmente */
+}
+
+.card-button:hover {
+    transform: scale(1.05); /* Hace que la tarjeta crezca al hover */
+    background-color: #b6baff;
+}
