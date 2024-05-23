@@ -104,7 +104,8 @@ const Cotizacion = () => {
             </div>
           ))}
 
-          <h3>Total: ${totalPrice.toFixed(2)}</h3>
+          <h3>Total: ${parseFloat(totalPrice).toLocaleString('es-ES', { maximumFractionDigits: 0 })}</h3>
+    
 
           <button type="submit">Guardar venta</button>
         </form>

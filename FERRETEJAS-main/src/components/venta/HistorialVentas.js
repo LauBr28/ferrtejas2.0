@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getFirestore, collection, getDocs, doc, deleteDoc, getDoc, query,orderBy,updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, deleteDoc, getDoc, query, orderBy, updateDoc } from 'firebase/firestore';
 import './HistorialVentas.css'; // Importa el archivo de estilos
 
 const HistorialVentas = () => {
@@ -8,7 +8,6 @@ const HistorialVentas = () => {
     const [loading, setLoading] = useState(true);
     const [ventaSeleccionada, setVentaSeleccionada] = useState(null);
     const [cotizacionSeleccionada, setCotizacionSeleccionada] = useState(null);
-    const [productosExistentes, setProductosExistentes] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -72,20 +71,20 @@ const HistorialVentas = () => {
     const handleEliminarVenta = async (id) => {
         try {
             const db = getFirestore();
-    
+
             // Obtener la venta que se va a eliminar
             const ventaDocRef = doc(db, 'ventas', id);
             const ventaDocSnapshot = await getDoc(ventaDocRef);
             const ventaData = ventaDocSnapshot.data();
-    
+
             if (!ventaData) {
                 console.error('La venta con ID', id, 'no existe.');
                 return;
             }
-    
+
             // Cargar los productos existentes
             const productosExistentes = await cargarProductosExistentes();
-    
+
             // Restaurar el stock de cada producto en la venta
             const productosVenta = ventaData.productos || [];
             
@@ -107,20 +106,18 @@ const HistorialVentas = () => {
                     console.log('Producto no encontrado:', producto.nombre);
                 }
             }
-    
+
             // Eliminar la venta de la base de datos
             await deleteDoc(ventaDocRef);
-    
+
             // Actualizar el estado de ventas en la interfaz de usuario
             setVentas(ventas.filter(venta => venta.id !== id));
-    
+
             alert('Venta eliminada con éxito');
         } catch (error) {
             alert('Error al eliminar la venta:', error);
         }
     };
-    
-
 
     const handleEliminarCotizacion = async (id) => {
         try {
@@ -144,7 +141,7 @@ const HistorialVentas = () => {
                 {ventas.map(venta => (
                     <li key={venta.id} className="venta-item">
                         <p>Fecha: {new Date(venta.fecha.seconds * 1000).toLocaleString()}</p>
-                        <p>Total: ${venta.totalVenta.toFixed(2)}</p>
+                        <p>Total: ${Number(venta.totalVenta).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                         <div className="venta-buttons">
                             <button onClick={() => handleVerDetalleVenta(venta.id)}>Ver Detalle</button>
                             <button onClick={() => handleEliminarVenta(venta.id)}>Eliminar Venta</button>
@@ -159,17 +156,17 @@ const HistorialVentas = () => {
                         <span className="close" onClick={() => setVentaSeleccionada(null)}>&times;</span>
                         <h3>Detalle de la Venta</h3>
                         <p>Fecha: {ventaSeleccionada.fecha && new Date(ventaSeleccionada.fecha.seconds * 1000).toLocaleString()}</p>
-                        <p>Total: ${ventaSeleccionada.totalVenta && ventaSeleccionada.totalVenta.toFixed(2)}</p>
+                        <p>Total: ${Number(ventaSeleccionada.totalVenta).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                         <h4>Productos:</h4>
                         <ul>
                             {ventaSeleccionada.productos.map((producto, index) => (
                                 <li key={index}>
                                     <p>Nombre: {producto.nombre}</p>
-                                    <p>Precio de Compra: ${producto.precioCompra}</p>
-                                    <p>Precio sin IVA: ${producto.precioSinIva}</p>
+                                    <p>Precio de Compra: ${Number(producto.precioCompra).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                    <p>Precio sin IVA: ${Number(producto.precioSinIva).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                                     <p>Cantidad: {producto.cantidad}</p>
                                     <p>Stock: {producto.stock}</p>
-                                    <p>Total Producto: ${producto.totalProducto && producto.totalProducto.toFixed(2)}</p>
+                                    <p>Total Producto: ${Number(producto.totalProducto).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                                 </li>
                             ))}
                         </ul>
@@ -182,7 +179,7 @@ const HistorialVentas = () => {
                 {cotizaciones.map(cotizacion => (
                     <li key={cotizacion.id} className="cotizacion-item">
                         <p>Fecha: {new Date(cotizacion.date.seconds * 1000).toLocaleString()}</p>
-                        <p>Total: ${cotizacion.totalPrice.toFixed(2)}</p>
+                        <p>Total: ${Number(cotizacion.totalPrice).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                         <div className="cotizacion-buttons">
                             <button onClick={() => handleVerDetalleCotizacion(cotizacion.id)}>Ver Detalle</button>
                             <button onClick={() => handleEliminarCotizacion(cotizacion.id)}>Eliminar Venta</button>
@@ -197,15 +194,16 @@ const HistorialVentas = () => {
                         <span className="close" onClick={() => setCotizacionSeleccionada(null)}>&times;</span>
                         <h3>Detalle de la Venta</h3>
                         <p>Fecha: {cotizacionSeleccionada.date && new Date(cotizacionSeleccionada.date.seconds * 1000).toLocaleString()}</p>
-                        <p>Total: ${cotizacionSeleccionada.totalPrice && cotizacionSeleccionada.totalPrice.toFixed(2)}</p>
+                        <p>Total: ${Number(cotizacionSeleccionada.totalPrice).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                        
                         <h4>Productos:</h4>
                         <ul>
                             {cotizacionSeleccionada.products.map((producto, index) => (
                                 <li key={index}>
                                     <p>Nombre: {producto.name}</p>
                                     <p>Cantidad: {producto.quantity}</p>
-                                    <p>Precio: ${producto.price}</p>
-                                    <p>Total Producto: ${producto.totalPrice && producto.totalPrice.toFixed(2)}</p>
+                                    <p>Precio: ${Number(producto.price).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                    <p>Total Producto: ${Number(producto.totalPrice).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                                 </li>
                             ))}
                         </ul>
@@ -217,4 +215,3 @@ const HistorialVentas = () => {
 };
 
 export default HistorialVentas;
-
